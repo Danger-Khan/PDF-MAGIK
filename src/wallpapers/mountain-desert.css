@@ -1,0 +1,14 @@
+.theme-root[data-wallpaper='mountain-desert'] {
+  --wallpaper-primary-light: #a64e27;
+  --wallpaper-primary-dark: #ffae73;
+  --wallpaper-raised-light: rgb(255 248 241 / 92%);
+  --wallpaper-raised-dark: rgb(47 31 33 / 93%);
+  --wallpaper-accent-start: #a64e27;
+  --wallpaper-accent-end: #db8752;
+}
+
+.theme-root[data-wallpaper='mountain-desert'] .app-shell {
+  background-image:
+    linear-gradient(var(--wallpaper-overlay), var(--wallpaper-overlay)),
+    url('../background-wallpapers/Mountain_Desert.jpg');
+}

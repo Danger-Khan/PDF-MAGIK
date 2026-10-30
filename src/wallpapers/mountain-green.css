@@ -1,0 +1,14 @@
+.theme-root[data-wallpaper='mountain-green'] {
+  --wallpaper-primary-light: #596a27;
+  --wallpaper-primary-dark: #c4d978;
+  --wallpaper-raised-light: rgb(248 250 235 / 92%);
+  --wallpaper-raised-dark: rgb(37 42 29 / 93%);
+  --wallpaper-accent-start: #596a27;
+  --wallpaper-accent-end: #94a83e;
+}
+
+.theme-root[data-wallpaper='mountain-green'] .app-shell {
+  background-image:
+    linear-gradient(var(--wallpaper-overlay), var(--wallpaper-overlay)),
+    url('../background-wallpapers/Mountain_Green.jpg');
+}

@@ -1,0 +1,14 @@
+.theme-root[data-wallpaper='map-farmland'] {
+  --wallpaper-primary-light: #287c4d;
+  --wallpaper-primary-dark: #81d69a;
+  --wallpaper-raised-light: rgb(250 255 249 / 91%);
+  --wallpaper-raised-dark: rgb(25 43 34 / 93%);
+  --wallpaper-accent-start: #287c4d;
+  --wallpaper-accent-end: #60ad56;
+}
+
+.theme-root[data-wallpaper='map-farmland'] .app-shell {
+  background-image:
+    linear-gradient(var(--wallpaper-overlay), var(--wallpaper-overlay)),
+    url('../background-wallpapers/Map_Farmland.jpg');
+}

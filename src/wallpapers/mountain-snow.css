@@ -1,0 +1,14 @@
+.theme-root[data-wallpaper='mountain-snow'] {
+  --wallpaper-primary-light: #126a9a;
+  --wallpaper-primary-dark: #6bc8f5;
+  --wallpaper-raised-light: rgb(242 250 255 / 92%);
+  --wallpaper-raised-dark: rgb(24 39 55 / 93%);
+  --wallpaper-accent-start: #126a9a;
+  --wallpaper-accent-end: #28a5d5;
+}
+
+.theme-root[data-wallpaper='mountain-snow'] .app-shell {
+  background-image:
+    linear-gradient(var(--wallpaper-overlay), var(--wallpaper-overlay)),
+    url('../background-wallpapers/Mountain_Snow.jpg');
+}
