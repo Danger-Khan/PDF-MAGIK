@@ -1,0 +1,14 @@
+.theme-root[data-wallpaper='village-desert'] {
+  --wallpaper-primary-light: #b35335;
+  --wallpaper-primary-dark: #ffab83;
+  --wallpaper-raised-light: rgb(255 246 239 / 92%);
+  --wallpaper-raised-dark: rgb(48 34 31 / 93%);
+  --wallpaper-accent-start: #b35335;
+  --wallpaper-accent-end: #e27f55;
+}
+
+.theme-root[data-wallpaper='village-desert'] .app-shell {
+  background-image:
+    linear-gradient(var(--wallpaper-overlay), var(--wallpaper-overlay)),
+    url('../background-wallpapers/Village_Desert.jpg');
+}

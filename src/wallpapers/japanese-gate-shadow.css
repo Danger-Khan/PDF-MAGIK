@@ -1,0 +1,14 @@
+.theme-root[data-wallpaper='japanese-gate-shadow'] {
+  --wallpaper-primary-light: #275b9a;
+  --wallpaper-primary-dark: #89baf7;
+  --wallpaper-raised-light: rgb(241 247 255 / 92%);
+  --wallpaper-raised-dark: rgb(24 35 58 / 93%);
+  --wallpaper-accent-start: #275b9a;
+  --wallpaper-accent-end: #528bd0;
+}
+
+.theme-root[data-wallpaper='japanese-gate-shadow'] .app-shell {
+  background-image:
+    linear-gradient(var(--wallpaper-overlay), var(--wallpaper-overlay)),
+    url('../background-wallpapers/Japenese_Gate_Shadow.jpg');
+}

@@ -1,0 +1,14 @@
+.theme-root[data-wallpaper='house-desert'] {
+  --wallpaper-primary-light: #8d5a39;
+  --wallpaper-primary-dark: #e7ae7a;
+  --wallpaper-raised-light: rgb(255 247 237 / 92%);
+  --wallpaper-raised-dark: rgb(49 37 31 / 93%);
+  --wallpaper-accent-start: #8d5a39;
+  --wallpaper-accent-end: #c88956;
+}
+
+.theme-root[data-wallpaper='house-desert'] .app-shell {
+  background-image:
+    linear-gradient(var(--wallpaper-overlay), var(--wallpaper-overlay)),
+    url('../background-wallpapers/House_Desert.jpg');
+}

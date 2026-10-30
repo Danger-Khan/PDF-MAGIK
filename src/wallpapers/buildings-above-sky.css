@@ -1,0 +1,14 @@
+.theme-root[data-wallpaper='buildings-above-sky'] {
+  --wallpaper-primary-light: #187ca4;
+  --wallpaper-primary-dark: #76d6f5;
+  --wallpaper-raised-light: rgb(239 250 255 / 92%);
+  --wallpaper-raised-dark: rgb(22 43 57 / 93%);
+  --wallpaper-accent-start: #187ca4;
+  --wallpaper-accent-end: #51b8d5;
+}
+
+.theme-root[data-wallpaper='buildings-above-sky'] .app-shell {
+  background-image:
+    linear-gradient(var(--wallpaper-overlay), var(--wallpaper-overlay)),
+    url('../background-wallpapers/Buildings_AboveSky.jpg');
+}
