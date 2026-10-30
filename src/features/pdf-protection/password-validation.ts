@@ -3,22 +3,12 @@ export interface PasswordValidation {
   confirmationError?: string;
 }
 
+export function countPasswordWords(password: string): number {
+  return password.trim().match(/\S+/g)?.length ?? 0;
+}
+
 export function getPasswordStrength(password: string): number {
-  if (!password) return 0;
-
-  const characterGroups = [
-    /[a-z]/.test(password),
-    /[A-Z]/.test(password),
-    /\d/.test(password),
-    /[^a-zA-Z0-9]/.test(password),
-  ].filter(Boolean).length;
-  const score =
-    Number(password.length >= 8) +
-    Number(password.length >= 12) +
-    Number(password.length >= 16) +
-    Number(characterGroups >= 2);
-
-  return Math.min(score, 4);
+  return Math.min(countPasswordWords(password), 4);
 }
 
 export function validatePasswords(
@@ -27,10 +17,8 @@ export function validatePasswords(
 ): PasswordValidation {
   const errors: PasswordValidation = {};
 
-  if (password.length < 8 || !/\S/.test(password)) {
-    errors.passwordError = 'Use at least 8 characters and avoid a spaces-only password.';
-  } else if (getPasswordStrength(password) < 2) {
-    errors.passwordError = 'Use a mix of character types for a stronger password.';
+  if (countPasswordWords(password) < 4) {
+    errors.passwordError = 'Use at least 4 words in your password.';
   }
 
   if (!confirmation) {

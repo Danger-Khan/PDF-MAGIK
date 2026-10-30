@@ -5,10 +5,19 @@
   --wallpaper-raised-dark: rgb(24 35 58 / 93%);
   --wallpaper-accent-start: #275b9a;
   --wallpaper-accent-end: #528bd0;
+  --wallpaper-glow: rgb(82 139 208 / 22%);
+  --wallpaper-art: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 240 240' fill='none' stroke='%23275b9a' stroke-width='3' stroke-linecap='round' stroke-linejoin='round' opacity='.58'%3E%3Ccircle cx='120' cy='102' r='39'/%3E%3Cpath d='M37 67h166M52 51h136M55 69v137m130-137v137M42 206h156M69 84c31 14 71 14 102 0m-102 21c31 14 71 14 102 0m-102 22c31 14 71 14 102 0'/%3E%3Cpath d='M120 45v114m-7-10 7 10 7-10M27 220h186'/%3E%3C/svg%3E");
+  --wallpaper-scenery: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 900' preserveAspectRatio='xMidYMid slice' fill='none' stroke='%23275b9a' stroke-width='4' opacity='.2'%3E%3Cpath d='M70 190c32-34 65-34 98 0 27-25 55-25 82 0m-188 17c37-27 74-27 111 0 28-20 55-20 83 0M1010 270c28-30 57-30 86 0 24-22 48-22 72 0m-158 16c32-23 63-23 95 0 23-18 47-18 70 0M1120 105c23-24 47-24 70 0 18-17 37-17 55 0'/%3E%3Cpath d='M355 290q80-60 160 0t160 0m250 85q65-48 130 0t130 0' opacity='.65'/%3E%3C/svg%3E");
 }
 
 .theme-root[data-wallpaper='japanese-gate-shadow'] .app-shell {
   background-image:
+    var(--wallpaper-art),
+    var(--wallpaper-scenery),
+    radial-gradient(ellipse at 92% 84%, var(--wallpaper-glow), transparent 38%),
     linear-gradient(var(--wallpaper-overlay), var(--wallpaper-overlay)),
     url('../background-wallpapers/Japenese_Gate_Shadow.jpg');
+  background-position: right 4vw bottom 4vh, center, center, center, center;
+  background-repeat: no-repeat;
+  background-size: 300px 300px, cover, cover, cover, cover;
 }

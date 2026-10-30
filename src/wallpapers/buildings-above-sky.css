@@ -5,10 +5,19 @@
   --wallpaper-raised-dark: rgb(22 43 57 / 93%);
   --wallpaper-accent-start: #187ca4;
   --wallpaper-accent-end: #51b8d5;
+  --wallpaper-glow: rgb(81 184 213 / 22%);
+  --wallpaper-art: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 240 240' fill='none' stroke='%23187ca4' stroke-width='3' stroke-linecap='round' stroke-linejoin='round' opacity='.58'%3E%3Cpath d='M31 216V99h55v117m0-72h36V50h51v166m0-98h37v98M18 216h204'/%3E%3Cpath d='M45 119h12m-12 22h12m-12 22h12m-12 22h12m20-66h1m0 22h1m35-50h12m-12 23h12m-12 23h12m-12 23h12m-12 23h12m-12 23h12m37-145h13m-13 23h13m-13 23h13m-13 23h13m-13 23h13m-13 23h13m-13 23h13m31-85h14m-14 23h14m-14 23h14m-14 23h14m-14 23h14'/%3E%3C/svg%3E");
+  --wallpaper-scenery: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 900' preserveAspectRatio='xMidYMid slice'%3E%3Cg fill='%23ffffff' opacity='.28'%3E%3Cpath d='M55 175c0-28 22-50 50-50 9-37 42-63 81-63 42 0 76 31 81 72 27 3 48 26 48 55 0 31-25 56-56 56H111c-31 0-56-25-56-56v-14Zm780 88c0-22 18-40 40-40 7-31 35-53 67-53 35 0 63 25 67 58 22 2 40 21 40 44 0 25-20 45-45 45H880c-25 0-45-20-45-45v-9Zm300-132c0-17 14-31 31-31 6-24 28-42 54-42 27 0 50 20 53 46 18 2 32 17 32 35 0 20-16 36-36 36h-122c-20 0-36-16-36-36v-8Z'/%3E%3C/g%3E%3Cg fill='none' stroke='%23187ca4' stroke-width='3' opacity='.22'%3E%3Cpath d='M80 220h230M875 317h200M1185 185h160M400 120h38m-19-19v38M690 250h30m-15-15v30'/%3E%3C/g%3E%3C/svg%3E");
 }
 
 .theme-root[data-wallpaper='buildings-above-sky'] .app-shell {
   background-image:
+    var(--wallpaper-art),
+    var(--wallpaper-scenery),
+    radial-gradient(ellipse at 92% 84%, var(--wallpaper-glow), transparent 38%),
     linear-gradient(var(--wallpaper-overlay), var(--wallpaper-overlay)),
     url('../background-wallpapers/Buildings_AboveSky.jpg');
+  background-position: right 4vw bottom 4vh, center, center, center, center;
+  background-repeat: no-repeat;
+  background-size: 300px 300px, cover, cover, cover, cover;
 }

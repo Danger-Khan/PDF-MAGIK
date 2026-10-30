@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import {
   Body1,
   Button,
@@ -34,7 +34,12 @@ import { PdfPreview } from '../components/PdfPreview/PdfPreview';
 import { PdfTools } from '../components/PdfTools/PdfTools';
 
 export function App() {
-  const [selectedPdf, setSelectedPdf] = useState<SelectedPdf | null>(null);
+  const [pdfFiles, setPdfFiles] = useState<SelectedPdf[]>([]);
+  const selectedPdf = pdfFiles.find((pdf) => pdf.included) ?? null;
+  const includedPdfs = useMemo(
+    () => pdfFiles.filter((pdf) => pdf.included),
+    [pdfFiles],
+  );
   const [password, setPassword] = useState('');
   const [confirmation, setConfirmation] = useState('');
   const [fileError, setFileError] = useState<string | null>(null);
@@ -52,10 +57,12 @@ export function App() {
   } = useThemePreferences();
   const openingSecret = password;
 
-  const handleSelect = (file: SelectedPdf | null) => {
-    setSelectedPdf(file);
-    setPassword('');
-    setConfirmation('');
+  const handleSelect = (files: SelectedPdf[]) => {
+    setPdfFiles(files);
+    if (files.length === 0) {
+      setPassword('');
+      setConfirmation('');
+    }
   };
 
   return (
@@ -124,7 +131,7 @@ export function App() {
         <section className="page-heading" aria-labelledby="page-title">
           <div>
             <Caption1 className="eyebrow">Local PDF protection</Caption1>
-            <Title1 id="page-title">Protect a PDF</Title1>
+            <Title1 id="page-title">Protect PDFs</Title1>
             <Body1 className="subtitle">
               Preview, protect, compress, add a page background, or merge PDFs. Processing
               happens in your browser.
@@ -149,14 +156,14 @@ export function App() {
           <div className="left-stack">
             <section aria-label="Selected PDF">
               <PdfFilePicker
-                selectedPdf={selectedPdf}
+                selectedPdfs={pdfFiles}
                 onSelect={handleSelect}
                 onError={setFileError}
                 processing={isProcessing}
               />
             </section>
             <section aria-label="PDF preview">
-              <PdfPreview selectedPdf={selectedPdf} />
+              <PdfPreview selectedPdfs={includedPdfs} />
             </section>
           </div>
 
@@ -168,7 +175,7 @@ export function App() {
               onConfirmationChange={setConfirmation}
             />
             <DownloadResult
-              selectedPdf={selectedPdf}
+              selectedPdfs={includedPdfs}
               secret={openingSecret}
               confirmation={confirmation}
               lifetimeHours={lifetimeEnabled ? lifetimeHours : null}
@@ -248,7 +255,7 @@ export function App() {
             size="small"
             disabled={isProcessing}
             onClick={() => {
-              setSelectedPdf(null);
+              setPdfFiles([]);
               setPassword('');
               setConfirmation('');
               setFileError(null);

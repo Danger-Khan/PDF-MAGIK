@@ -97,7 +97,7 @@ input {
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
-  background-attachment: fixed;
+  background-attachment: scroll;
 }
 
 .topbar {
@@ -227,7 +227,21 @@ input {
 }
 
 .page-heading h1 {
-  margin: 5px 0 6px;
+  margin: 5px 0 8px;
+  width: fit-content;
+  padding: 0.02em 0.2em 0.12em;
+  color: var(--color-primary);
+  background: color-mix(
+    in srgb,
+    var(--wallpaper-accent-end) 28%,
+    var(--color-surface-raised)
+  );
+  border: 1px solid
+    color-mix(in srgb, var(--wallpaper-accent-start) 38%, transparent);
+  border-bottom: 4px solid var(--wallpaper-accent-start);
+  border-radius: 8px;
+  box-shadow: 0 5px 16px
+    color-mix(in srgb, var(--wallpaper-accent-start) 18%, transparent);
   letter-spacing: -0.8px;
 }
 
@@ -279,12 +293,33 @@ input {
 
 .pdf-preview-frame {
   display: block;
-  width: calc(100% - 32px);
-  height: 520px;
-  margin: 0 16px 16px;
+  width: 100%;
+  height: 420px;
   background: #fff;
   border: 1px solid var(--color-border);
-  border-radius: 8px;
+  border-radius: 10px;
+}
+
+.pdf-preview-list {
+  display: grid;
+  gap: 14px;
+  padding: 0 16px 16px;
+}
+
+.pdf-preview-item {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+  padding: 12px;
+  background: var(--color-surface-raised);
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+}
+
+.pdf-preview-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .pdf-preview-empty {
@@ -426,6 +461,45 @@ input {
 
 .file-state-card--selected {
   border-bottom-color: var(--color-border);
+}
+
+.batch-file-list {
+  display: grid;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.batch-file-list .file-state-card {
+  margin-bottom: 0;
+}
+
+.batch-file-checkbox {
+  display: grid;
+  width: 26px;
+  min-height: 34px;
+  flex: 0 0 auto;
+  place-items: center;
+  cursor: pointer;
+}
+
+.batch-file-checkbox input {
+  width: 17px;
+  height: 17px;
+  margin: 0;
+  accent-color: var(--color-primary);
+}
+
+.batch-file-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin: 0 16px;
+  flex-wrap: wrap;
+}
+
+.batch-file-actions [role="status"] {
+  margin-left: auto;
+  color: var(--color-muted);
 }
 
 .file-state-card--empty {
@@ -718,6 +792,12 @@ input {
   line-height: 1.5;
 }
 
+.batch-progress {
+  display: block;
+  margin-top: 10px;
+  color: var(--color-primary);
+}
+
 .result-message {
   border-radius: 8px;
 }
@@ -921,6 +1001,16 @@ input {
   .file-state-card {
     margin-right: 12px;
     margin-left: 12px;
+  }
+
+  .batch-file-actions {
+    margin-right: 12px;
+    margin-left: 12px;
+  }
+
+  .batch-file-actions [role="status"] {
+    width: 100%;
+    margin-left: 0;
   }
 
   .status {

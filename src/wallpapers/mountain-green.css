@@ -5,10 +5,19 @@
   --wallpaper-raised-dark: rgb(37 42 29 / 93%);
   --wallpaper-accent-start: #596a27;
   --wallpaper-accent-end: #94a83e;
+  --wallpaper-glow: rgb(148 168 62 / 22%);
+  --wallpaper-art: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 240 240' fill='none' stroke='%23596a27' stroke-width='3' stroke-linecap='round' stroke-linejoin='round' opacity='.58'%3E%3Cpath d='m119 24 39 61h-24l39 60h-33l43 59H57l43-59H67l39-60H82l37-61Z'/%3E%3Cpath d='M119 204v24M36 216h168M34 63c9-13 18-13 27 0m118 13c8-11 16-11 24 0M51 111h28m83-64h26'/%3E%3C/svg%3E");
+  --wallpaper-scenery: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 900' preserveAspectRatio='xMidYMid slice' fill='%23596a27' opacity='.16'%3E%3Cpath d='M-40 900V745l48 66H-8l46 62H8l38 55H-40Zm70 0 56-75-22 2 43-58 43 58-22-2 56 75H30Zm115 0 39-55-18 1 36-49 36 49-18-1 39 55h-114Zm1000 0 55-75-22 2 43-58 43 58-22-2 56 75h-153Zm120 0 42-58-19 1 37-51 37 51-19-1 42 58h-120Zm100 0 53-73-21 2 41-56 42 56-22-2 54 73h-147Z'/%3E%3Cpath d='M0 835q180-90 360 0t360 0 360 0 360 0v65H0Z' opacity='.55'/%3E%3C/svg%3E");
 }
 
 .theme-root[data-wallpaper='mountain-green'] .app-shell {
   background-image:
+    var(--wallpaper-art),
+    var(--wallpaper-scenery),
+    radial-gradient(ellipse at 92% 84%, var(--wallpaper-glow), transparent 38%),
     linear-gradient(var(--wallpaper-overlay), var(--wallpaper-overlay)),
     url('../background-wallpapers/Mountain_Green.jpg');
+  background-position: right 4vw bottom 4vh, center, center, center, center;
+  background-repeat: no-repeat;
+  background-size: 300px 300px, cover, cover, cover, cover;
 }

@@ -5,10 +5,19 @@
   --wallpaper-raised-dark: rgb(24 39 55 / 93%);
   --wallpaper-accent-start: #126a9a;
   --wallpaper-accent-end: #28a5d5;
+  --wallpaper-glow: rgb(40 165 213 / 20%);
+  --wallpaper-art: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 240 240' fill='none' stroke='%23126a9a' stroke-width='3' stroke-linecap='round' stroke-linejoin='round' opacity='.58'%3E%3Cpath d='m20 195 69-105 27 39 22-33 82 99H20Z'/%3E%3Cpath d='m89 90 14 22-17-4m52-12 13 19-17-4M32 211h176'/%3E%3Cpath d='M59 44v28m-14-14h28m74-27v24m-12-12h24m34 42v20m-10-10h20M82 153v24m-12-12h24'/%3E%3C/svg%3E");
+  --wallpaper-scenery: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 900' preserveAspectRatio='xMidYMid slice'%3E%3Cg fill='%23ffffff' opacity='.3'%3E%3Cpath d='M90 190c0-25 20-45 45-45 8-34 38-58 74-58 39 0 70 29 75 66 25 3 44 24 44 50 0 28-23 51-51 51H141c-28 0-51-23-51-51v-13Zm820-70c0-20 16-36 36-36 7-28 32-48 61-48 31 0 57 23 61 53 20 2 36 19 36 40 0 23-18 41-41 41H861c-23 0-41-18-41-41v-9Zm250 195c0-16 13-29 29-29 6-22 26-38 49-38 25 0 46 19 49 43 16 2 29 15 29 32 0 18-15 33-33 33h-140c-18 0-33-15-33-33v-8Z'/%3E%3C/g%3E%3Cg fill='none' stroke='%23126a9a' stroke-width='3' opacity='.24'%3E%3Cpath d='M110 217h222M855 142h226M1160 323h178'/%3E%3Cpath d='M475 145v24m-12-12h24m598 80v20m-10-10h20M695 330v18m-9-9h18'/%3E%3C/g%3E%3C/svg%3E");
 }
 
 .theme-root[data-wallpaper='mountain-snow'] .app-shell {
   background-image:
+    var(--wallpaper-art),
+    var(--wallpaper-scenery),
+    radial-gradient(ellipse at 92% 84%, var(--wallpaper-glow), transparent 38%),
     linear-gradient(var(--wallpaper-overlay), var(--wallpaper-overlay)),
     url('../background-wallpapers/Mountain_Snow.jpg');
+  background-position: right 4vw bottom 4vh, center, center, center, center;
+  background-repeat: no-repeat;
+  background-size: 300px 300px, cover, cover, cover, cover;
 }

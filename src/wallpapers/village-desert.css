@@ -5,10 +5,19 @@
   --wallpaper-raised-dark: rgb(48 34 31 / 93%);
   --wallpaper-accent-start: #b35335;
   --wallpaper-accent-end: #e27f55;
+  --wallpaper-glow: rgb(226 127 85 / 22%);
+  --wallpaper-art: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 240 240' fill='none' stroke='%23b35335' stroke-width='3' stroke-linecap='round' stroke-linejoin='round' opacity='.58'%3E%3Cpath d='M18 132h54v74H18zm68-38h62v112H86zm76 23h59v89h-59z'/%3E%3Cpath d='m12 132 33-37 33 37m-1 0 39-48 40 48m-1 0 32-35 32 35M32 150h12m-12 20h12m-12 20h12m58-63h13m20 0h13m-46 22h13m20 0h13m-46 22h13m20 0h13m-46 22h13m20 0h13m38-46h12m16 0h12m-40 23h12m16 0h12m-28 23h12m16 0h12M10 216h220'/%3E%3C/svg%3E");
+  --wallpaper-scenery: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 900' preserveAspectRatio='xMidYMid slice'%3E%3Ccircle cx='1130' cy='165' r='58' fill='%23ffab83' opacity='.2'/%3E%3Cpath fill='%23e27f55' opacity='.17' d='M0 685Q190 600 390 690T790 675T1190 660T1600 672V920H0Z'/%3E%3Cpath fill='%23b35335' opacity='.12' d='M-80 790Q180 645 430 780T900 765T1370 745T1600 765V920H-80Z'/%3E%3Cg fill='none' stroke='%23b35335' stroke-width='3' opacity='.23'%3E%3Cpath d='M0 750Q210 640 440 750T900 735T1440 720M0 810Q210 695 440 805T900 790T1440 775'/%3E%3C/g%3E%3C/svg%3E");
 }
 
 .theme-root[data-wallpaper='village-desert'] .app-shell {
   background-image:
+    var(--wallpaper-art),
+    var(--wallpaper-scenery),
+    radial-gradient(ellipse at 92% 84%, var(--wallpaper-glow), transparent 38%),
     linear-gradient(var(--wallpaper-overlay), var(--wallpaper-overlay)),
     url('../background-wallpapers/Village_Desert.jpg');
+  background-position: right 4vw bottom 4vh, center, center, center, center;
+  background-repeat: no-repeat;
+  background-size: 300px 300px, cover, cover, cover, cover;
 }

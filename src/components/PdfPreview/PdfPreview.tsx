@@ -3,38 +3,59 @@ import { Caption1, Card, CardHeader, Text } from '@fluentui/react-components';
 import type { SelectedPdf } from '../PdfFilePicker/PdfFilePicker';
 
 interface PdfPreviewProps {
-  selectedPdf: SelectedPdf | null;
+  selectedPdfs: SelectedPdf[];
 }
 
-export function PdfPreview({ selectedPdf }: PdfPreviewProps) {
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+interface PdfPreviewUrl {
+  file: File;
+  url: string;
+}
+
+export function PdfPreview({ selectedPdfs }: PdfPreviewProps) {
+  const [previewUrls, setPreviewUrls] = useState<PdfPreviewUrl[]>([]);
 
   useEffect(() => {
-    if (!selectedPdf) {
-      setPreviewUrl(null);
-      return;
-    }
-
-    const url = URL.createObjectURL(selectedPdf.file);
-    setPreviewUrl(url);
-    return () => URL.revokeObjectURL(url);
-  }, [selectedPdf]);
+    const urls = selectedPdfs.map(({ file }) => ({
+      file,
+      url: URL.createObjectURL(file),
+    }));
+    setPreviewUrls(urls);
+    return () => urls.forEach(({ url }) => URL.revokeObjectURL(url));
+  }, [selectedPdfs]);
 
   return (
     <Card className="panel preview-panel" appearance="filled">
       <CardHeader
         header={<Text weight="semibold">PDF preview</Text>}
-        description={<Caption1>Preview updates automatically when you choose a PDF.</Caption1>}
+        description={
+          <Caption1>
+            Previewing {selectedPdfs.length} included PDF
+            {selectedPdfs.length === 1 ? '' : 's'}.
+          </Caption1>
+        }
       />
-      {previewUrl ? (
-        <iframe
-          className="pdf-preview-frame"
-          src={previewUrl}
-          title="PDF preview"
-        />
+      {previewUrls.length > 0 ? (
+        <div className="pdf-preview-list">
+          {previewUrls.map(({ file, url }) => (
+            <section
+              className="pdf-preview-item"
+              key={`${file.name}-${file.size}-${file.lastModified}`}
+              aria-label={`Preview of ${file.name}`}
+            >
+              <Text className="pdf-preview-name" title={file.name} weight="semibold">
+                {file.name}
+              </Text>
+              <iframe
+                className="pdf-preview-frame"
+                src={url}
+                title={`PDF preview: ${file.name}`}
+              />
+            </section>
+          ))}
+        </div>
       ) : (
         <div className="pdf-preview-empty">
-          <Caption1>Select a PDF to preview its pages here.</Caption1>
+          <Caption1>Select PDFs and check the ones you want to preview.</Caption1>
         </div>
       )}
     </Card>

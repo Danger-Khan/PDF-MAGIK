@@ -1,9 +1,10 @@
 # PDF Magik
 
-PDF Magik is a browser-based PDF utility. Select a PDF to preview it, protect it
-with an opening password, rewrite it for possible size savings, add an image
-background to each page, or merge it with other PDFs. Operations create a
-downloaded copy; the app does not upload or retain documents.
+PDF Magik is a browser-based PDF utility. Select one or more PDFs to preview and
+protect with an opening password, rewrite for possible size savings, add an
+image background to each page, or merge with other PDFs. Batch protection
+downloads only the checked PDFs as a ZIP; each gets its own protected copy
+using the same password. The app does not upload or retain documents.
 
 ## Run locally
 
@@ -30,11 +31,12 @@ randomness for browser use. The app explicitly selects AES-256. PDF-reader
 support varies; older or specialized readers may not open this encryption
 level. Try the output in the reader you intend to use.
 
-The selected PDF is parsed and rewritten locally. Already-encrypted, damaged,
-PDF/A, or complex PDFs may not be supported; rewriting can invalidate existing
-digital signatures. Use a strong opening password and keep it somewhere safe:
-the app does not store or recover it. The security of a PDF password also
-depends on the password itself and the capabilities of the PDF reader.
+PDFs are parsed, protected, and zipped locally. Passwords must contain at least
+four whitespace-separated words; no particular mix of letters, numbers, or
+symbols is required. Keep the password somewhere safe: the app does not store
+or recover it. Already-encrypted, damaged, PDF/A, or complex PDFs may not be
+supported; rewriting can invalidate existing digital signatures. PDF password
+security also depends on the password itself and the capabilities of the reader.
 
 PDF processing runs in browser Web Workers. Separate protection, compression,
 background, and merge jobs can run concurrently without blocking the interface.
@@ -47,8 +49,9 @@ dimensions. Merging preserves page order, starting with the selected PDF.
 The optional lifetime reminder uses an hours slider and shows a suggested date
 after export. It is informational only; it is not embedded as executable code,
 does not expire or delete the PDF, and cannot be enforced by offline PDF readers.
-Theme and wallpaper selections are saved in this browser. The wallpaper remains
-fixed while the page scrolls, and the foreground accent and surface colors
-coordinate with the selected wallpaper. Each wallpaper has an individual
-stylesheet imported by `src/styles.css`; choosing a wallpaper activates its
-image and color palette through the theme root's `data-wallpaper` attribute.
+Theme and wallpaper selections are saved in this browser. Wallpaper backgrounds
+scroll naturally with the page and scale to cover the available app area. The
+foreground accent and surface colors coordinate with the selected wallpaper.
+Each wallpaper has an individual stylesheet imported by `src/styles.css`;
+choosing a wallpaper activates its image and color palette through the theme
+root's `data-wallpaper` attribute.

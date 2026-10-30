@@ -7,18 +7,22 @@ import {
 describe('password validation', () => {
   it('requires a usable password and a matching confirmation', () => {
     expect(validatePasswords('', '')).toEqual({
-      passwordError: 'Use at least 8 characters and avoid a spaces-only password.',
+      passwordError: 'Use at least 4 words in your password.',
       confirmationError: 'Re-enter your opening password to confirm it.',
     });
     expect(validatePasswords('short', 'different').confirmationError).toBe(
       'The passwords do not match.',
     );
-    expect(validatePasswords('Strong password 2026!', 'Strong password 2026!')).toEqual({});
+    expect(validatePasswords('Strong password phrase 2026!', 'Strong password phrase 2026!')).toEqual({});
   });
 
-  it('scores longer passwords with mixed character types higher', () => {
+  it('scores passwords by word count without requiring specific character types', () => {
     expect(getPasswordStrength('')).toBe(0);
-    expect(getPasswordStrength('abcdefgh')).toBe(1);
-    expect(getPasswordStrength('Strong password 2026!')).toBe(4);
+    expect(getPasswordStrength('blue sky')).toBe(2);
+    expect(getPasswordStrength('one two three four')).toBe(4);
+    expect(validatePasswords('one two three four', 'one two three four')).toEqual({});
+    expect(validatePasswords('one two three', 'one two three').passwordError).toBe(
+      'Use at least 4 words in your password.',
+    );
   });
 });

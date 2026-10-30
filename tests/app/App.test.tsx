@@ -4,6 +4,7 @@ import { cleanup, fireEvent, render, screen, within } from '@testing-library/rea
 import userEvent from '@testing-library/user-event';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { PDFDocument } from '@cantoo/pdf-lib';
+import { unzipSync } from 'fflate';
 import { App } from '../../src/app/App';
 import { ThemeProvider } from '../../src/app/ThemeProvider';
 
@@ -55,10 +56,10 @@ describe('App', () => {
   it('renders the PDF protection workspace', () => {
     renderApp();
 
-    expect(screen.getByRole('region', { name: 'Protect a PDF' })).toBeTruthy();
+    expect(screen.getByRole('region', { name: 'Protect PDFs' })).toBeTruthy();
     expect(screen.getByText('No PDF selected yet')).toBeTruthy();
-    expect(screen.getByRole('button', { name: 'Protect & download' })).toBeTruthy();
-    expect(screen.getByText('Select a PDF to preview its pages here.')).toBeTruthy();
+    expect(screen.getByRole('button', { name: 'Protect & download ZIP' })).toBeTruthy();
+    expect(screen.getByText('Select PDFs and check the ones you want to preview.')).toBeTruthy();
     expect(screen.queryByRole('slider', { name: /Reminder after/ })).toBeNull();
     expect(screen.getByRole('button', { name: 'Compress PDF' })).toHaveProperty(
       'disabled',
@@ -137,11 +138,11 @@ describe('App', () => {
       type: 'application/pdf',
     });
 
-    await user.upload(screen.getByLabelText('Choose a PDF file'), pdf);
-    await screen.findByText('sample.pdf');
+    await user.upload(screen.getByLabelText('Choose PDF files'), pdf);
+    await screen.findByTitle('PDF preview: sample.pdf');
 
-    await user.type(screen.getByLabelText('Password'), 'Strong password 2026!');
-    await user.type(screen.getByLabelText('Confirm password'), 'Strong password 2026!');
+    await user.type(screen.getByLabelText('Password'), 'Strong password phrase 2026!');
+    await user.type(screen.getByLabelText('Confirm password'), 'Strong password phrase 2026!');
     await user.click(
       screen.getByRole('checkbox', { name: 'Set an informational PDF lifetime reminder' }),
     );
@@ -154,10 +155,76 @@ describe('App', () => {
       createObjectURL: vi.fn(() => 'blob:protected-pdf'),
       revokeObjectURL,
     });
-    await user.click(screen.getByRole('button', { name: 'Protect & download' }));
+    await user.click(screen.getByRole('button', { name: 'Protect & download ZIP' }));
 
     expect(await screen.findByText(/Informational reminder:/)).toBeTruthy();
-    expect(screen.getAllByText('sample-protected.pdf').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('pdf-magik-protected.zip').length).toBeGreaterThan(0);
+    expect(screen.getByLabelText('Password')).toHaveProperty('value', '');
+    await vi.waitFor(() => expect(revokeObjectURL).toHaveBeenCalled());
+  });
+
+  it('appends PDFs, includes only checked files, and downloads a ZIP of protected PDFs', async () => {
+    const user = userEvent.setup();
+    renderApp();
+
+    const makePdf = async (name: string, text: string) => {
+      const document = await PDFDocument.create();
+      document.addPage([240, 320]).drawText(text);
+      return new File([toArrayBuffer(await document.save())], name, {
+        type: 'application/pdf',
+      });
+    };
+
+    const firstPdf = await makePdf('first.pdf', 'First document');
+    const excludedPdf = await makePdf('excluded.pdf', 'Excluded document');
+    const appendedPdf = await makePdf('appended.pdf', 'Appended document');
+    const picker = screen.getByLabelText('Choose PDF files');
+    expect(picker).toHaveProperty('multiple', true);
+
+    await user.upload(picker, [firstPdf, excludedPdf]);
+    await screen.findByTitle('PDF preview: excluded.pdf');
+    await user.upload(picker, appendedPdf);
+    await screen.findByTitle('PDF preview: appended.pdf');
+    expect(screen.getByText('3 of 3 included in ZIP')).toBeTruthy();
+    expect(await screen.findByTitle('PDF preview: first.pdf')).toBeTruthy();
+    expect(await screen.findByTitle('PDF preview: excluded.pdf')).toBeTruthy();
+    expect(await screen.findByTitle('PDF preview: appended.pdf')).toBeTruthy();
+
+    await user.click(
+      screen.getByRole('checkbox', {
+        name: 'Include excluded.pdf in protected ZIP',
+      }),
+    );
+    expect(screen.getByText('2 of 3 included in ZIP')).toBeTruthy();
+    await vi.waitFor(() =>
+      expect(screen.queryByTitle('PDF preview: excluded.pdf')).toBeNull(),
+    );
+    expect(screen.getByTitle('PDF preview: first.pdf')).toBeTruthy();
+    expect(screen.getByTitle('PDF preview: appended.pdf')).toBeTruthy();
+
+    await user.type(screen.getByLabelText('Password'), 'calm mountain paper lantern');
+    await user.type(
+      screen.getByLabelText('Confirm password'),
+      'calm mountain paper lantern',
+    );
+
+    const createObjectURL = vi.fn((_blob: Blob) => 'blob:protected-zip');
+    const revokeObjectURL = vi.fn();
+    vi.stubGlobal('URL', { createObjectURL, revokeObjectURL });
+    await user.click(screen.getByRole('button', { name: 'Protect & download ZIP' }));
+
+    expect(await screen.findByText(/2 protected PDFs included: pdf-magik-protected\.zip/)).toBeTruthy();
+    const archiveBlob = createObjectURL.mock.calls[0][0];
+    const archive = unzipSync(new Uint8Array(await archiveBlob.arrayBuffer()));
+    expect(Object.keys(archive).sort()).toEqual([
+      'appended-protected.pdf',
+      'first-protected.pdf',
+    ]);
+
+    const protectedPdf = await PDFDocument.load(archive['first-protected.pdf'], {
+      password: 'calm mountain paper lantern',
+    });
+    expect(protectedPdf.getPageCount()).toBe(1);
     expect(screen.getByLabelText('Password')).toHaveProperty('value', '');
     await vi.waitFor(() => expect(revokeObjectURL).toHaveBeenCalled());
   });
@@ -171,9 +238,9 @@ describe('App', () => {
     const pdf = new File([toArrayBuffer(await source.save())], 'preview.pdf', {
       type: 'application/pdf',
     });
-    await user.upload(screen.getByLabelText('Choose a PDF file'), pdf);
+    await user.upload(screen.getByLabelText('Choose PDF files'), pdf);
 
-    const preview = await screen.findByTitle('PDF preview');
+    const preview = await screen.findByTitle('PDF preview: preview.pdf');
     expect(preview.getAttribute('src')).toBe('blob:pdf-preview');
     expect(screen.getByRole('button', { name: 'Compress PDF' })).toHaveProperty(
       'disabled',
@@ -203,7 +270,7 @@ describe('App', () => {
     const pdf = new File([toArrayBuffer(await document.save())], 'source.pdf', {
       type: 'application/pdf',
     });
-    await user.upload(screen.getByLabelText('Choose a PDF file'), pdf);
+    await user.upload(screen.getByLabelText('Choose PDF files'), pdf);
 
     const backgroundBytes = new Uint8Array(
       Buffer.from(
@@ -239,10 +306,10 @@ describe('App', () => {
     const user = userEvent.setup();
     renderApp();
 
-    await user.click(screen.getByRole('button', { name: 'Protect & download' }));
+    await user.click(screen.getByRole('button', { name: 'Protect & download ZIP' }));
 
-    expect(await screen.findByText('Choose one PDF before protecting it.')).toBeTruthy();
-    expect(screen.getByText('Use at least 8 characters and avoid a spaces-only password.')).toBeTruthy();
+    expect(await screen.findByText('Select at least one PDF to include in the ZIP.')).toBeTruthy();
+    expect(screen.getByText('Use at least 4 words in your password.')).toBeTruthy();
     expect(screen.getByText('Re-enter your opening password to confirm it.')).toBeTruthy();
   });
 
@@ -251,13 +318,13 @@ describe('App', () => {
     renderApp();
 
     const pdf = new File(['%PDF-1.7\n'], 'sample.pdf', { type: 'application/pdf' });
-    await user.upload(screen.getByLabelText('Choose a PDF file'), pdf);
+    await user.upload(screen.getByLabelText('Choose PDF files'), pdf);
 
-    expect(await screen.findByText('sample.pdf')).toBeTruthy();
-    expect(screen.getByText('sample-protected.pdf')).toBeTruthy();
+    expect(await screen.findByTitle('PDF preview: sample.pdf')).toBeTruthy();
+    expect(screen.getByText('pdf-magik-protected.zip')).toBeTruthy();
 
-    await user.type(screen.getByLabelText('Password'), 'Strong password 2026!');
-    await user.type(screen.getByLabelText('Confirm password'), 'Strong password 2026!');
+    await user.type(screen.getByLabelText('Password'), 'Strong password phrase 2026!');
+    await user.type(screen.getByLabelText('Confirm password'), 'Strong password phrase 2026!');
     await user.click(screen.getByRole('button', { name: 'Clear this session' }));
 
     expect(screen.getByText('No PDF selected yet')).toBeTruthy();

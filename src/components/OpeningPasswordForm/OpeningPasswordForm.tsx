@@ -14,7 +14,10 @@ import {
   KeyRegular,
   LockClosedRegular,
 } from '@fluentui/react-icons';
-import { getPasswordStrength } from '../../features/pdf-protection/password-validation';
+import {
+  countPasswordWords,
+  getPasswordStrength,
+} from '../../features/pdf-protection/password-validation';
 
 interface OpeningPasswordFormProps {
   secret: string;
@@ -34,11 +37,9 @@ export function OpeningPasswordForm({
   const [showPassword, setShowPassword] = useState(false);
   const strength = getPasswordStrength(secret);
   const passwordError =
-    secret.length > 0 && secret.length < 8
-      ? 'Use at least 8 characters. A longer password is safer.'
-      : secret.length >= 8 && strength < 2
-        ? 'Add another character type for a stronger password.'
-        : undefined;
+    secret.length > 0 && countPasswordWords(secret) < 4
+      ? 'Use at least 4 words in your password.'
+      : undefined;
   const confirmationError =
     confirmation.length > 0 && secret !== confirmation
       ? 'The passwords do not match.'
@@ -66,7 +67,7 @@ export function OpeningPasswordForm({
           }
           validationMessage={
             passwordError ??
-            'Use 12+ characters with a mix of letters, numbers, and symbols.'
+            'Use 4 or more words. Any words or characters are allowed.'
           }
         >
           <Input

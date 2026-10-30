@@ -5,10 +5,19 @@
   --wallpaper-raised-dark: rgb(47 31 33 / 93%);
   --wallpaper-accent-start: #a64e27;
   --wallpaper-accent-end: #db8752;
+  --wallpaper-glow: rgb(219 135 82 / 22%);
+  --wallpaper-art: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 240 240' fill='none' stroke='%23a64e27' stroke-width='3' stroke-linecap='round' stroke-linejoin='round' opacity='.58'%3E%3Ccircle cx='166' cy='67' r='28'/%3E%3Cpath d='m19 190 66-94 36 49 23-30 77 75H19Z'/%3E%3Cpath d='m85 96 14 20-16-3m61 2 12 16-18-4M36 207h168M59 220h120'/%3E%3Cpath d='M48 54h38M31 70h25m127 19h25'/%3E%3C/svg%3E");
+  --wallpaper-scenery: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 900' preserveAspectRatio='xMidYMid slice'%3E%3Cpath fill='%23db8752' opacity='.15' d='M0 690Q190 600 390 692T790 680T1190 665T1600 675V920H0Z'/%3E%3Cpath fill='%23a64e27' opacity='.12' d='M-80 790Q180 650 430 785T900 770T1370 748T1600 770V920H-80Z'/%3E%3Cg fill='none' stroke='%23a64e27' stroke-width='3' opacity='.25'%3E%3Cpath d='M0 755Q210 645 440 754T900 738T1440 722M0 810Q210 700 440 809T900 793T1440 777'/%3E%3C/g%3E%3C/svg%3E");
 }
 
 .theme-root[data-wallpaper='mountain-desert'] .app-shell {
   background-image:
+    var(--wallpaper-art),
+    var(--wallpaper-scenery),
+    radial-gradient(ellipse at 92% 84%, var(--wallpaper-glow), transparent 38%),
     linear-gradient(var(--wallpaper-overlay), var(--wallpaper-overlay)),
     url('../background-wallpapers/Mountain_Desert.jpg');
+  background-position: right 4vw bottom 4vh, center, center, center, center;
+  background-repeat: no-repeat;
+  background-size: 300px 300px, cover, cover, cover, cover;
 }

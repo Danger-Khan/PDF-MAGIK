@@ -5,10 +5,19 @@
   --wallpaper-raised-dark: rgb(25 43 34 / 93%);
   --wallpaper-accent-start: #287c4d;
   --wallpaper-accent-end: #60ad56;
+  --wallpaper-glow: rgb(96 173 86 / 20%);
+  --wallpaper-art: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 240 240' fill='none' stroke='%23287c4d' stroke-width='3' stroke-linecap='round' stroke-linejoin='round' opacity='.58'%3E%3Cpath d='M26 44c40-24 75 22 112-3s57-7 76-25M20 74c44-24 76 22 118-2s54-7 76-22M18 105c48-23 76 19 119-2s53-6 79-19M17 137c50-20 80 17 123-3s51-5 75-16M25 168c42-17 73 15 112-4s51-4 69-13M41 197c34-12 63 10 92-4s45-5 60-10'/%3E%3Cpath d='M116 214v-42m0 16c-19-2-29-13-31-28 17 0 28 8 31 21m0-2c2-17 13-27 30-28-2 17-11 27-30 32'/%3E%3C/svg%3E");
+  --wallpaper-scenery: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 900' preserveAspectRatio='xMidYMid slice' fill='none' stroke='%23287c4d' stroke-width='3' opacity='.19'%3E%3Cpath d='M-80 610c180-120 340 120 520 0s340 120 520 0 340 120 560 0M-90 650c180-120 340 120 520 0s340 120 520 0 340 120 560 0M-100 690c180-120 340 120 520 0s340 120 520 0 340 120 560 0M-110 730c180-120 340 120 520 0s340 120 520 0 340 120 560 0M-120 770c180-120 340 120 520 0s340 120 520 0 340 120 560 0'/%3E%3Cpath d='M70 900c80-100 90-190 85-290m-24 82c-68-8-99-42-103-94 57 0 91 29 103 69m-2-15c7-49 43-78 93-80-4 51-34 83-92 94m103 234c80-90 90-170 85-260m-20 72c-57-6-82-36-85-78 48 0 76 23 85 57'/%3E%3C/svg%3E");
 }
 
 .theme-root[data-wallpaper='map-farmland'] .app-shell {
   background-image:
+    var(--wallpaper-art),
+    var(--wallpaper-scenery),
+    radial-gradient(ellipse at 92% 84%, var(--wallpaper-glow), transparent 38%),
     linear-gradient(var(--wallpaper-overlay), var(--wallpaper-overlay)),
     url('../background-wallpapers/Map_Farmland.jpg');
+  background-position: right 4vw bottom 4vh, center, center, center, center;
+  background-repeat: no-repeat;
+  background-size: 300px 300px, cover, cover, cover, cover;
 }
