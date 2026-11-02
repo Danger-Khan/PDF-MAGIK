@@ -1,0 +1,24 @@
+# Flutter/Dart build and tooling output
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+.pub-cache/
+.pub/
+build/
+*.iml
+*.ipr
+*.iws
+.idea/
+
+# Generated platform projects (run `flutter create --platforms=android .`
+# to regenerate; see ../ANDROID.md)
+android/
+ios/
+
+# Local environment
+local.properties
+
+# Bundled web app snapshot — regenerated from the repo root's dist/ build;
+# see "Keeping the bundled web app current" in ../ANDROID.md
+assets/web/
