@@ -157,7 +157,7 @@ describe('App', () => {
     });
     await user.click(screen.getByRole('button', { name: 'Protect & download ZIP' }));
 
-    expect(await screen.findByText(/Informational reminder:/)).toBeTruthy();
+    expect(await screen.findByText(/expiry banner was stamped/)).toBeTruthy();
     expect(screen.getAllByText('pdf-magik-protected.zip').length).toBeGreaterThan(0);
     expect(screen.getByLabelText('Password')).toHaveProperty('value', '');
     await vi.waitFor(() => expect(revokeObjectURL).toHaveBeenCalled());

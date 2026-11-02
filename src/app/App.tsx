@@ -226,8 +226,9 @@ export function App() {
                 onChange={(event) => setLifetimeHours(event.currentTarget.valueAsNumber)}
               />
               <Caption1>
-                Informational only: the app shows a reminder after export. It does not expire
-                or delete the PDF.
+                Informational only: a visible banner is stamped on every page of the
+                protected PDF and the app also shows a reminder after export. Nothing
+                expires, locks, or deletes the PDF — no PDF reader can do that.
               </Caption1>
             </div>
           )}

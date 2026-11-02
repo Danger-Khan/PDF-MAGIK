@@ -25,4 +25,20 @@ describe('protectPdf', () => {
     });
     expect(reopened.getPageCount()).toBe(1);
   });
+
+  it('stamps an expiry banner onto the page before encrypting when expiryHours is set', async () => {
+    const source = await PDFDocument.create();
+    source.addPage([240, 320]);
+    const sourceBytes = await source.save();
+
+    const withoutExpiry = await protectPdf(sourceBytes, 'Strong password 2026!');
+    const withExpiry = await protectPdf(sourceBytes, 'Strong password 2026!', 48);
+
+    expect(withExpiry.byteLength).not.toBe(withoutExpiry.byteLength);
+
+    const reopened = await PDFDocument.load(withExpiry, {
+      password: 'Strong password 2026!',
+    });
+    expect(reopened.getPageCount()).toBe(1);
+  });
 });

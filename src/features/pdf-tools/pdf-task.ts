@@ -10,7 +10,16 @@ export type PdfTaskRequest =
       operation: 'merge';
       files: Array<{ name: string; bytes: ArrayBuffer }>;
     }
-  | { operation: 'protect'; source: ArrayBuffer; password: string };
+  | {
+      operation: 'imagesToPdf';
+      images: Array<{ bytes: ArrayBuffer; type: 'image/jpeg' | 'image/png' }>;
+    }
+  | {
+      operation: 'protect';
+      source: ArrayBuffer;
+      password: string;
+      expiryHours?: number | null;
+    };
 
 export async function executePdfTask(request: PdfTaskRequest): Promise<Uint8Array> {
   switch (request.operation) {
@@ -34,9 +43,19 @@ export async function executePdfTask(request: PdfTaskRequest): Promise<Uint8Arra
       );
       return mergePdfs(files);
     }
+    case 'imagesToPdf': {
+      const { imagesToPdf } = await import('./pdf-tools');
+      return imagesToPdf(
+        request.images.map(({ bytes, type }) => ({ bytes: new Uint8Array(bytes), type })),
+      );
+    }
     case 'protect': {
       const { protectPdf } = await import('../pdf-protection/protection-service');
-      return protectPdf(new Uint8Array(request.source), request.password);
+      return protectPdf(
+        new Uint8Array(request.source),
+        request.password,
+        request.expiryHours,
+      );
     }
   }
 }

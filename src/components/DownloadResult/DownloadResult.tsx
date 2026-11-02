@@ -117,6 +117,7 @@ export function DownloadResult({
               sourceBytes.byteOffset + sourceBytes.byteLength,
             ) as ArrayBuffer,
             password: secret,
+            expiryHours: lifetimeHours,
           });
         } catch {
           throw new Error(
@@ -215,7 +216,9 @@ export function DownloadResult({
               {selectedPdfs.length === 1 ? '' : 's'} included: {downloadedFilename}
               {lifetimeReminderDate && (
                 <div>
-                  Informational reminder: {lifetimeReminderDate.toLocaleString()}
+                  A yellow expiry banner was stamped on every page (informational only,
+                  not enforced). Based on export time, that reminder would read:{' '}
+                  {lifetimeReminderDate.toLocaleString()}
                 </div>
               )}
             </MessageBarBody>

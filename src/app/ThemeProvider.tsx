@@ -7,6 +7,7 @@ import {
   type PropsWithChildren,
 } from 'react';
 import { FluentProvider } from '@fluentui/react-components';
+import { applyWallpaperFavicon } from './favicon';
 import { darkTheme, lightTheme } from './theme';
 
 export type ThemeMode = 'system' | 'light' | 'dark';
@@ -94,6 +95,10 @@ export function ThemeProvider({ children }: PropsWithChildren) {
 
   useEffect(() => {
     window.localStorage.setItem('pdf-magik-wallpaper', wallpaper);
+  }, [wallpaper]);
+
+  useEffect(() => {
+    applyWallpaperFavicon(wallpaper);
   }, [wallpaper]);
 
   return (

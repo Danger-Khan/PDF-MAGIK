@@ -53,6 +53,31 @@ export function getToolOutputFilename(filename: string, suffix: string): string 
   return `${baseName}-${suffix}.pdf`;
 }
 
+function stripExtension(filename: string): string {
+  const safeFilename = filename.replace(/[<>:"/\\|?*\x00-\x1f]/g, '').trim();
+  const dotIndex = safeFilename.lastIndexOf('.');
+  return dotIndex > 0 ? safeFilename.slice(0, dotIndex) : safeFilename;
+}
+
+export function getImagesToPdfFilename(imageNames: string[]): string {
+  const base = stripExtension(imageNames[0] ?? '') || 'images';
+  return imageNames.length > 1 ? `${base}-and-${imageNames.length - 1}-more.pdf` : `${base}.pdf`;
+}
+
+export function getPdfPageImageFilename(
+  filename: string,
+  pageNumber: number,
+  extension: 'png' | 'jpg',
+): string {
+  const base = stripExtension(filename) || 'document';
+  return `${base}-page-${pageNumber}.${extension}`;
+}
+
+export function getPdfImagesArchiveFilename(filename: string): string {
+  const base = stripExtension(filename) || 'document';
+  return `${base}-pages.zip`;
+}
+
 export function formatFileSize(size: number): string {
   if (size < 1024 * 1024) return `${Math.max(1, Math.round(size / 1024))} KB`;
   return `${(size / (1024 * 1024)).toFixed(1)} MB`;

@@ -1,6 +1,9 @@
 import { describe, expect, it } from 'vitest';
 import {
   formatFileSize,
+  getImagesToPdfFilename,
+  getPdfImagesArchiveFilename,
+  getPdfPageImageFilename,
   getProtectedFilename,
   MAX_PDF_SIZE_BYTES,
   validatePdfFile,
@@ -51,5 +54,22 @@ describe('browser file helpers', () => {
   it('formats file sizes for the selected-file summary', () => {
     expect(formatFileSize(0)).toBe('1 KB');
     expect(formatFileSize(2.4 * 1024 * 1024)).toBe('2.4 MB');
+  });
+
+  it('names images-to-PDF output after the first image, noting extra images', () => {
+    expect(getImagesToPdfFilename(['photo.jpg'])).toBe('photo.pdf');
+    expect(getImagesToPdfFilename(['photo.jpg', 'second.png', 'third.png'])).toBe(
+      'photo-and-2-more.pdf',
+    );
+    expect(getImagesToPdfFilename([])).toBe('images.pdf');
+  });
+
+  it('names PDF-to-image output per page and per archive', () => {
+    expect(getPdfPageImageFilename('Quarterly-Report.pdf', 2, 'png')).toBe(
+      'Quarterly-Report-page-2.png',
+    );
+    expect(getPdfImagesArchiveFilename('Quarterly-Report.pdf')).toBe(
+      'Quarterly-Report-pages.zip',
+    );
   });
 });

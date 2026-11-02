@@ -37,6 +37,25 @@ export async function addImageBackground(
   return background.save({ rewrite: true, useObjectStreams: true });
 }
 
+export async function imagesToPdf(
+  images: Array<{ bytes: Uint8Array; type: 'image/jpeg' | 'image/png' }>,
+): Promise<Uint8Array> {
+  if (images.length === 0) {
+    throw new Error('Choose at least one image to convert to a PDF.');
+  }
+
+  const { PDFDocument } = await import('@cantoo/pdf-lib');
+  const pdf = await PDFDocument.create();
+
+  for (const { bytes, type } of images) {
+    const image = type === 'image/png' ? await pdf.embedPng(bytes) : await pdf.embedJpg(bytes);
+    const page = pdf.addPage([image.width, image.height]);
+    page.drawImage(image, { x: 0, y: 0, width: image.width, height: image.height });
+  }
+
+  return pdf.save({ rewrite: true, useObjectStreams: true });
+}
+
 export async function mergePdfs(files: File[]): Promise<Uint8Array> {
   if (files.length < 2) {
     throw new Error('Choose at least two PDFs to merge.');

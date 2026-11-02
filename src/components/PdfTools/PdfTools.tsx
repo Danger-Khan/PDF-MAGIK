@@ -7,10 +7,15 @@ import {
   CardHeader,
   Text,
 } from '@fluentui/react-components';
+import { zip } from 'fflate';
 import type { SelectedPdf } from '../PdfFilePicker/PdfFilePicker';
 import { runPdfTask } from '../../features/pdf-tools/pdf-task-client';
+import { pdfToImages } from '../../features/pdf-tools/pdf-to-images';
 import {
   formatFileSize,
+  getImagesToPdfFilename,
+  getPdfImagesArchiveFilename,
+  getPdfPageImageFilename,
   getToolOutputFilename,
 } from '../../features/pdf-protection/browser-file';
 
@@ -20,7 +25,7 @@ interface PdfToolsProps {
   onProcessingChange: (started: boolean) => void;
 }
 
-type Operation = 'compress' | 'background' | 'merge';
+type Operation = 'compress' | 'background' | 'merge' | 'imagesToPdf' | 'pdfToImages';
 type OperationStatus = {
   running: boolean;
   message: string | null;
@@ -31,6 +36,8 @@ const emptyStatuses: Record<Operation, OperationStatus> = {
   compress: { running: false, message: null, error: null },
   background: { running: false, message: null, error: null },
   merge: { running: false, message: null, error: null },
+  imagesToPdf: { running: false, message: null, error: null },
+  pdfToImages: { running: false, message: null, error: null },
 };
 
 export function PdfTools({
@@ -40,8 +47,10 @@ export function PdfTools({
 }: PdfToolsProps) {
   const backgroundInputRef = useRef<HTMLInputElement>(null);
   const mergeInputRef = useRef<HTMLInputElement>(null);
+  const imagesInputRef = useRef<HTMLInputElement>(null);
   const [backgroundFile, setBackgroundFile] = useState<File | null>(null);
   const [mergeFiles, setMergeFiles] = useState<File[]>([]);
+  const [imageFiles, setImageFiles] = useState<File[]>([]);
   const [statuses, setStatuses] = useState(emptyStatuses);
   const activeOperations = useRef(new Set<Operation>());
 
@@ -51,10 +60,14 @@ export function PdfTools({
     setStatuses(emptyStatuses);
   }, [selectedPdf?.file]);
 
-  const downloadResult = (bytes: Uint8Array, filename: string) => {
+  const downloadResult = (
+    bytes: Uint8Array,
+    filename: string,
+    mimeType = 'application/pdf',
+  ) => {
     const buffer = new ArrayBuffer(bytes.byteLength);
     new Uint8Array(buffer).set(bytes);
-    const url = URL.createObjectURL(new Blob([buffer], { type: 'application/pdf' }));
+    const url = URL.createObjectURL(new Blob([buffer], { type: mimeType }));
     const link = document.createElement('a');
     link.href = url;
     link.download = filename;
@@ -66,7 +79,12 @@ export function PdfTools({
 
   const runOperation = async (
     operationName: Operation,
-    operation: () => Promise<{ bytes: Uint8Array; filename: string; message: string }>,
+    operation: () => Promise<{
+      bytes: Uint8Array;
+      filename: string;
+      message: string;
+      mimeType?: string;
+    }>,
   ) => {
     if (activeOperations.current.has(operationName)) return;
     activeOperations.current.add(operationName);
@@ -78,7 +96,7 @@ export function PdfTools({
 
     try {
       const result = await operation();
-      downloadResult(result.bytes, result.filename);
+      downloadResult(result.bytes, result.filename, result.mimeType);
       setStatuses((current) => ({
         ...current,
         [operationName]: { running: true, message: result.message, error: null },
@@ -184,6 +202,78 @@ export function PdfTools({
     });
   };
 
+  const handleImagesToPdf = () => {
+    if (imageFiles.length === 0) return;
+    const invalidFiles = imageFiles.filter((file) => !getImageType(file));
+    if (invalidFiles.length > 0) {
+      setStatuses((current) => ({
+        ...current,
+        imagesToPdf: {
+          ...current.imagesToPdf,
+          error: `Choose only JPG or PNG images. Not supported: ${invalidFiles
+            .map((file) => file.name)
+            .join(', ')}.`,
+          message: null,
+        },
+      }));
+      return;
+    }
+
+    void runOperation('imagesToPdf', async () => {
+      const images = await Promise.all(
+        imageFiles.map(async (file) => {
+          const bytes = new Uint8Array(await file.arrayBuffer());
+          return {
+            type: getImageType(file) as 'image/jpeg' | 'image/png',
+            buffer: bytes.buffer.slice(
+              bytes.byteOffset,
+              bytes.byteOffset + bytes.byteLength,
+            ) as ArrayBuffer,
+          };
+        }),
+      );
+      const bytes = await runPdfTask({
+        operation: 'imagesToPdf',
+        images: images.map(({ buffer, type }) => ({ bytes: buffer, type })),
+      });
+      return {
+        bytes,
+        filename: getImagesToPdfFilename(imageFiles.map((file) => file.name)),
+        message: `${imageFiles.length} image${imageFiles.length === 1 ? '' : 's'} combined into one PDF and downloaded.`,
+      };
+    });
+  };
+
+  const handlePdfToImages = () => {
+    if (!selectedPdf) return;
+
+    void runOperation('pdfToImages', async () => {
+      const sourceBytes = new Uint8Array(await selectedPdf.file.arrayBuffer());
+      const images = await pdfToImages(sourceBytes, 'image/png');
+
+      if (images.length === 1) {
+        return {
+          bytes: images[0].bytes,
+          filename: getPdfPageImageFilename(selectedPdf.name, images[0].pageNumber, 'png'),
+          message: '1 page converted to a PNG image and downloaded.',
+          mimeType: 'image/png',
+        };
+      }
+
+      const entries: Record<string, Uint8Array> = {};
+      images.forEach(({ pageNumber, bytes }) => {
+        entries[getPdfPageImageFilename(selectedPdf.name, pageNumber, 'png')] = bytes;
+      });
+      const archiveBytes = await createZipArchive(entries);
+      return {
+        bytes: archiveBytes,
+        filename: getPdfImagesArchiveFilename(selectedPdf.name),
+        message: `${images.length} pages converted to PNG images and downloaded as a ZIP.`,
+        mimeType: 'application/zip',
+      };
+    });
+  };
+
   const updateBackgroundFile = (event: ChangeEvent<HTMLInputElement>) => {
     setBackgroundFile(event.currentTarget.files?.[0] ?? null);
     event.currentTarget.value = '';
@@ -191,6 +281,11 @@ export function PdfTools({
 
   const updateMergeFiles = (event: ChangeEvent<HTMLInputElement>) => {
     setMergeFiles(Array.from(event.currentTarget.files ?? []));
+    event.currentTarget.value = '';
+  };
+
+  const updateImageFiles = (event: ChangeEvent<HTMLInputElement>) => {
+    setImageFiles(Array.from(event.currentTarget.files ?? []));
     event.currentTarget.value = '';
   };
 
@@ -278,6 +373,56 @@ export function PdfTools({
           </Button>
           <OperationFeedback status={statuses.merge} />
         </section>
+
+        <section className="pdf-tool" aria-labelledby="images-to-pdf-tool-title">
+          <Text id="images-to-pdf-tool-title" weight="semibold">Images to PDF</Text>
+          <Caption1>Combine JPG or PNG images into one PDF, one page per image, in order.</Caption1>
+          <input
+            ref={imagesInputRef}
+            className="visually-hidden"
+            type="file"
+            accept="image/jpeg,image/png,.jpg,.jpeg,.png"
+            multiple
+            aria-label="Choose images to convert to a PDF"
+            onChange={updateImageFiles}
+          />
+          <Button
+            appearance="secondary"
+            disabled={processing || statuses.imagesToPdf.running}
+            onClick={() => imagesInputRef.current?.click()}
+          >
+            Choose images
+          </Button>
+          {imageFiles.length > 0 && (
+            <Caption1>
+              {imageFiles.length} image{imageFiles.length === 1 ? '' : 's'} selected
+            </Caption1>
+          )}
+          <Button
+            appearance="primary"
+            disabled={imageFiles.length === 0 || processing || statuses.imagesToPdf.running}
+            onClick={handleImagesToPdf}
+          >
+            {statuses.imagesToPdf.running ? 'Converting…' : 'Convert images to PDF'}
+          </Button>
+          <OperationFeedback status={statuses.imagesToPdf} />
+        </section>
+
+        <section className="pdf-tool" aria-labelledby="pdf-to-images-tool-title">
+          <Text id="pdf-to-images-tool-title" weight="semibold">PDF to images</Text>
+          <Caption1>
+            Render every page of the selected PDF to a PNG image. Multiple pages download as a
+            ZIP.
+          </Caption1>
+          <Button
+            appearance="primary"
+            disabled={!selectedPdf || processing || statuses.pdfToImages.running}
+            onClick={handlePdfToImages}
+          >
+            {statuses.pdfToImages.running ? 'Converting…' : 'Convert PDF to images'}
+          </Button>
+          <OperationFeedback status={statuses.pdfToImages} />
+        </section>
       </div>
     </Card>
   );
@@ -293,6 +438,18 @@ function OperationFeedback({ status }: { status: OperationStatus }) {
       {status.error ?? status.message}
     </Body1>
   );
+}
+
+function createZipArchive(entries: Record<string, Uint8Array>): Promise<Uint8Array> {
+  return new Promise((resolve, reject) => {
+    zip(entries, { level: 0 }, (error, data) => {
+      if (error) {
+        reject(error);
+        return;
+      }
+      resolve(data);
+    });
+  });
 }
 
 function getImageType(file: File): 'image/jpeg' | 'image/png' | null {

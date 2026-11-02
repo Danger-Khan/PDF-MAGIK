@@ -43,5 +43,7 @@ function getTransferables(request: PdfTaskRequest): Transferable[] {
       return [request.source, request.image];
     case 'merge':
       return request.files.map(({ bytes }) => bytes);
+    case 'imagesToPdf':
+      return request.images.map(({ bytes }) => bytes);
   }
 }

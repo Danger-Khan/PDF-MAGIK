@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest';
 import {
   addImageBackground,
   compressPdf,
+  imagesToPdf,
   mergePdfs,
 } from '../../src/features/pdf-tools/pdf-tools';
 import { getToolOutputFilename } from '../../src/features/pdf-protection/browser-file';
@@ -54,6 +55,25 @@ describe('PDF tools', () => {
 
     expect(document.getPageCount()).toBe(3);
     await expect(mergePdfs([first])).rejects.toThrow('Choose at least two PDFs');
+  });
+
+  it('combines images into a PDF with one page per image, sized to the image', async () => {
+    const onePixelPng = new Uint8Array(
+      Buffer.from(
+        'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+/lS8AAAAASUVORK5CYII=',
+        'base64',
+      ),
+    );
+    const output = await imagesToPdf([
+      { bytes: onePixelPng, type: 'image/png' },
+      { bytes: onePixelPng, type: 'image/png' },
+    ]);
+    const document = await PDFDocument.load(output);
+
+    expect(document.getPageCount()).toBe(2);
+    expect(document.getPage(0).getWidth()).toBe(1);
+    expect(document.getPage(0).getHeight()).toBe(1);
+    await expect(imagesToPdf([])).rejects.toThrow('Choose at least one image');
   });
 
   it('builds safe output filenames', () => {

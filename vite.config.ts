@@ -72,6 +72,9 @@ self.addEventListener('fetch', (event) => {
 }
 
 export default defineConfig({
+  // Relative base: the production build works unmodified from the site
+  // root, a GitHub Pages project subpath, or any other deployment path.
+  base: './',
   plugins: [react(), offlineServiceWorker()],
   worker: {
     format: 'es',

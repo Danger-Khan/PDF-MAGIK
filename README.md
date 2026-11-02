@@ -4,7 +4,10 @@ PDF Magik is a browser-based PDF utility. Select one or more PDFs to preview and
 protect with an opening password, rewrite for possible size savings, add an
 image background to each page, or merge with other PDFs. Batch protection
 downloads only the checked PDFs as a ZIP; each gets its own protected copy
-using the same password. The app does not upload or retain documents.
+using the same password. The PDF tools panel also converts JPG or PNG images
+into a single PDF (one page per image) and renders a selected PDF's pages back
+to PNG images, downloaded individually or as a ZIP. The app does not upload or
+retain documents.
 
 ## Run locally
 
@@ -46,12 +49,19 @@ cannot re-encode embedded images, so the resulting file may not be smaller.
 Page backgrounds support JPG and PNG images and are stretched to each page's
 dimensions. Merging preserves page order, starting with the selected PDF.
 
-The optional lifetime reminder uses an hours slider and shows a suggested date
-after export. It is informational only; it is not embedded as executable code,
-does not expire or delete the PDF, and cannot be enforced by offline PDF readers.
+The optional lifetime reminder uses an hours slider and, when enabled, stamps a
+visible yellow banner across the top of every page of the protected PDF stating
+the chosen hour count, in addition to showing a suggested date in the app after
+export. It is informational only; it is not embedded as executable code, does
+not expire, lock, or delete the PDF, and cannot be enforced by any PDF reader —
+no PDF format feature can delete a file from disk or revoke access after it has
+been shared.
 Theme and wallpaper selections are saved in this browser. Wallpaper backgrounds
 scroll naturally with the page and scale to cover the available app area. The
 foreground accent and surface colors coordinate with the selected wallpaper.
 Each wallpaper has an individual stylesheet imported by `src/styles.css`;
 choosing a wallpaper activates its image and color palette through the theme
-root's `data-wallpaper` attribute.
+root's `data-wallpaper` attribute. The browser tab favicon and the
+apple-touch-icon are personalized to match: each wallpaper has its own
+recolored icon variant (same artwork, hue-shifted to that wallpaper's accent
+color), swapped in automatically when a wallpaper is chosen.
