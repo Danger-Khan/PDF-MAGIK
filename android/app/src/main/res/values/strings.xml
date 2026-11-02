@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">PDF Magik</string>
+    <string name="title_activity_main">PDF Magik</string>
+    <string name="package_name">com.dangerkhan.pdfmagik</string>
+    <string name="custom_url_scheme">com.dangerkhan.pdfmagik</string>
+</resources>
